@@ -6,6 +6,7 @@ import classes from "./App.css";
 // import ErrorBoundary from "../ErrorBoundary/ErrorBoundary";
 import Persons from "../components/persons/Persons";
 import Cockpit from "../components/Cockpit/Cockpit";
+import AuthContext from "../context/auth-context";
 
 class App extends Component {
   // const App = (props) => {
@@ -50,6 +51,9 @@ class App extends Component {
     ],
     otherStuff: "this is something",
     showPersons: false,
+    showCockpit: true,
+    changeCounter: 0,
+    authenticated: false,
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -81,8 +85,11 @@ class App extends Component {
     let persons = [...this.state.persons];
     persons[personIndex] = person;
 
-    this.setState({
-      persons: persons,
+    this.setState((prevState, props) => {
+      return {
+        persons: persons,
+        changeCounter: prevState.changeCounter + 1,
+      };
     });
   };
 
@@ -96,6 +103,9 @@ class App extends Component {
   togglePersonsHandler = () => {
     let doesShow = this.state.showPersons;
     this.setState({ showPersons: !doesShow });
+  };
+  loginHandler = () => {
+    this.setState({ authenticated: true });
   };
   componentDidMount() {
     console.log("[App.js] ComponentDidMount");
@@ -134,6 +144,7 @@ class App extends Component {
             persons={this.state.persons}
             deletePersonHandler={this.deletePersonHandler}
             nameChangeHandler={this.nameChangeHandler}
+            isAuthenticated={this.state.authenticated}
           ></Persons>
         </div>
       );
@@ -141,13 +152,30 @@ class App extends Component {
 
     return (
       <div className={classes.App}>
-        <Cockpit
-          switchNameHandler={this.switchNameHandler}
-          togglePersonsHandler={this.togglePersonsHandler}
-          persons={this.state.persons}
-          showPersons={this.state.showPersons}
-        ></Cockpit>
+        <button
+          onClick={() => {
+            this.setState({ showCockpit: false });
+          }}
+        >
+          Remove Cockpit
+        </button>
+        {/* <AuthContext.Provider
+          value={{
+            authenticated: this.state.authenticated,
+            login: this.loginHandler,
+          }}
+        > */}
+        {this.state.showCockpit ? (
+          <Cockpit
+            switchNameHandler={this.switchNameHandler}
+            togglePersonsHandler={this.togglePersonsHandler}
+            personsLength={this.state.persons.length}
+            showPersons={this.state.showPersons}
+            login={this.loginHandler}
+          />
+        ) : null}
         {persons}
+        {/* </AuthContext.Provider> */}
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Person from "./Person/Person";
+// import authContext from "../../context/auth-context";
 
 class Persons extends Component {
   // static getDerivedStateFromProps(props, state) {
@@ -8,6 +9,7 @@ class Persons extends Component {
   // }
   shouldComponentUpdate(nextProps, nextState) {
     console.log("[Persons.js] shouldComponentUpdate");
+
     return true;
   }
   getSnapshotBeforeUpdate(prevProps, prevState) {
@@ -17,6 +19,9 @@ class Persons extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log("[Persons.js] componentDidUpdate");
     console.log(snapshot);
+  }
+  componentWillUnmount() {
+    console.log("[Persons.js] componentWillUnmount");
   }
   render() {
     console.log("[Persons.js] Rendering...");
@@ -28,6 +33,7 @@ class Persons extends Component {
           key={person.id}
           onClick={() => this.props.deletePersonHandler(index)}
           changed={(event) => this.props.nameChangeHandler(event, person.id)}
+          isAuth={this.props.isAuthenticated}
         />
       );
     });
